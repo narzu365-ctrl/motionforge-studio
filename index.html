@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#090e20">
+  <title>MotionForge — HTML to MP4 Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">✦</span><span>MotionForge <small>STOCK VIDEO STUDIO</small></span></a>
+    <nav><a href="#editor">Editor</a><a href="#export">Export</a><a href="README.md" target="_blank">Guide</a></nav>
+    <span class="status"><i></i> LOCAL WORKSPACE</span>
+  </header>
+
+  <main class="shell">
+    <section class="intro">
+      <div><p class="eyebrow">HTML • CSS • SVG → VIDEO</p><h1>Create motion.<br><em>Export professionally.</em></h1>
+      <p class="sub">Build original motion graphics, preview them live, then export WebM or MP4 — with optional cloud rendering.</p></div>
+      <div class="intro-stat"><strong>4K</strong><span>UP TO 3840 × 2160</span><strong>60</strong><span>FRAMES PER SECOND</span></div>
+    </section>
+
+    <section class="workspace" id="editor">
+      <div class="panel editor-panel">
+        <div class="panel-head"><div><span class="step">01</span><h2>Creative editor</h2></div><span class="live-dot">LIVE PREVIEW</span></div>
+        <div class="toolbar">
+          <label>STARTER TEMPLATE
+            <select id="templateSelect">
+              <option value="leaves">Organic leaves</option>
+              <option value="orbit">Cosmic orbit</option>
+              <option value="business">Business typography</option>
+              <option value="gradient">Abstract gradient</option>
+              <option value="particles">Particle field</option>
+            </select>
+          </label>
+          <button class="btn ghost" id="loadTemplate">Load template</button>
+          <button class="btn ghost" id="resetCode">Reset code</button>
+        </div>
+        <div class="editor-grid">
+          <div class="code-wrap"><div class="code-title"><span>HTML DOCUMENT</span><span id="saveState">Ready</span></div>
+            <textarea id="htmlCode" spellcheck="false" aria-label="HTML animation code"></textarea>
+            <div class="editor-actions"><button class="btn secondary" id="copyCode">Copy HTML</button><button class="btn primary" id="updatePreview">↻ Update preview</button></div>
+          </div>
+          <div class="preview-wrap"><div class="code-title"><span>CANVAS PREVIEW</span><span class="preview-size" id="previewSize">16:9 · 1280×720</span></div>
+            <div class="preview-stage"><iframe id="previewFrame" title="Animation preview" sandbox="allow-scripts allow-same-origin"></iframe></div>
+            <div class="preview-foot"><span>Preview is scaled to fit this panel.</span><button class="text-btn" id="refreshPreview">Refresh ↗</button><button class="text-btn" id="openCleanPreview">Open clean render tab ↗</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel settings-panel" id="export">
+        <div class="panel-head"><div><span class="step">02</span><h2>Render settings</h2></div><span class="pill">STOCK WORKFLOW</span></div>
+        <div class="settings-grid">
+          <label>Resolution<select id="resolution"><option value="1920x1080">Full HD · 1920×1080</option><option value="2560x1440">QHD · 2560×1440</option><option value="3840x2160" selected>4K UHD · 3840×2160</option><option value="1080x1920">Vertical · 1080×1920</option><option value="1080x1080">Square · 1080×1080</option></select></label>
+          <label>Frame rate<select id="fps"><option>24</option><option selected>30</option><option>60</option></select></label>
+          <label>Duration (seconds)<input id="duration" type="number" min="3" max="60" value="10"></label>
+          <label>Render method<select id="renderMode"><option value="browser">Browser capture + MP4 conversion</option><option value="cloud">Cloud renderer (API)</option><option value="hybrid" selected>Hybrid · cloud first, browser fallback</option></select></label>
+          <label>Output quality<select id="quality"><option value="18">High quality</option><option value="21" selected>Balanced</option><option value="25">Smaller file</option></select></label>
+          <label>Background<select id="background"><option value="keep" selected>Keep HTML background</option><option value="black">Force black</option><option value="white">Force white</option></select></label>
+        </div>
+        <div class="notice"><b>ⓘ</b><span>Browser export asks you to share this tab. Keep the tab visible while recording. Browser capture is limited by device performance; for dependable 4K output, connect a cloud rendering server.</span></div>
+        <div class="cloud-row"><label>Cloud render API URL <input id="cloudUrl" type="url" placeholder="https://your-render-server.example.com/render"></label><button class="btn ghost" id="saveCloud">Save endpoint</button></div>
+        <div class="export-actions"><button class="btn primary large" id="exportBtn">⬇ Export MP4</button><button class="btn secondary large" id="webmBtn">Export WebM</button></div>
+        <div class="progress-box" id="progressBox" hidden><div class="progress-top"><span id="progressLabel">Preparing render…</span><b id="progressPercent">0%</b></div><div class="progress-track"><i id="progressBar"></i></div><small id="progressDetail">Please keep this tab open.</small></div>
+        <p class="small-note" id="exportMessage">No render started yet. Your source HTML stays on this device.</p>
+      </div>
+    </section>
+
+    <section class="panel library-panel">
+      <div class="panel-head"><div><span class="step">03</span><h2>Stock motion starter library</h2></div><span class="pill">ORIGINAL STARTERS</span></div>
+      <div class="library-grid">
+        <button class="template-card" data-template="leaves"><span class="thumb leaves-thumb">✧</span><b>Organic nature</b><small>Soft botanical motion</small></button>
+        <button class="template-card" data-template="orbit"><span class="thumb orbit-thumb">◉</span><b>Cosmic science</b><small>Planet and orbital loop</small></button>
+        <button class="template-card" data-template="business"><span class="thumb business-thumb">Aa</span><b>Business typography</b><small>Modern kinetic type</small></button>
+        <button class="template-card" data-template="gradient"><span class="thumb gradient-thumb">〰</span><b>Abstract gradient</b><small>Fluid color movement</small></button>
+        <button class="template-card" data-template="particles"><span class="thumb particles-thumb">⁙</span><b>Particle background</b><small>Minimal technology loop</small></button>
+      </div>
+    </section>
+
+    <footer><span>MotionForge Studio · GitHub Pages ready</span><span>Make original work. Check every export before stock submission.</span></footer>
+  </main>
+
+  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+  <script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
