@@ -86,22 +86,24 @@ async function convertWebmToMp4(blob,width,height,fps,crf){
 }
 
 async function cloudRender(outputMp4){
-  const endpoint=$("cloudUrl").value.trim();
-  if(!endpoint)throw new Error("Enter your cloud render API URL first, or choose browser rendering.");
-  const duration=Math.max(3,Math.min(60,Number($("duration").value)||10));
-  const payload={html:$("htmlCode").value,width:dimensions().width,height:dimensions().height,fps:Number($("fps").value),duration,format:outputMp4?"mp4":"webm",quality:Number($("quality").value),background:$("background").value};
-  setProgress(4,"Sending render job","Uploading your HTML and render settings to your configured server.");
-  const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-  if(!response.ok)throw new Error(`Cloud renderer returned HTTP ${response.status}.`);
-  const contentType=response.headers.get("content-type")||"";
-  if(contentType.includes("application/json")){
-    const result=await response.json();
-    if(result.downloadUrl){const r=await fetch(result.downloadUrl);if(!r.ok)throw new Error("Could not download cloud render.");downloadBlob(await r.blob(),result.filename||`motionforge-cloud.${outputMp4?"mp4":"webm"}`);setProgress(100,"Cloud render ready","Downloaded render from your server.");return;}
-    throw new Error(result.error||"Cloud API response did not include downloadUrl. See README for API contract.");
-  }
-  const blob=await response.blob();downloadBlob(blob,`motionforge-cloud.${outputMp4?"mp4":"webm"}`);setProgress(100,"Cloud render ready",`${(blob.size/1024/1024).toFixed(1)} MB downloaded.`);
+ const baseUrl=$("cloudUrl").value.trim().replace(/\/+$/,""),token=$("cloudToken").value.trim();
+ if(!baseUrl)throw new Error("Enter your cloud render server URL first.");
+ if(!token)throw new Error("Enter your private Cloud API token first.");
+ const duration=Math.max(3,Math.min(60,Number($("duration").value)||10));
+ const payload={html:$("htmlCode").value,width:dimensions().width,height:dimensions().height,fps:Number($("fps").value),duration,format:outputMp4?"mp4":"webm",quality:Number($("quality").value),background:$("background").value};
+ setProgress(4,"Sending render job","Cloud server is preparing Chromium and rendering your frames.");
+ const response=await fetch(`${baseUrl}/render`,{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},body:JSON.stringify(payload)});
+ if(!response.ok){let detail=`Cloud renderer returned HTTP ${response.status}.`;try{const body=await response.json();if(body.error)detail=body.error;}catch(e){}throw new Error(detail);}
+ const blob=await response.blob();if(!blob.size)throw new Error("Cloud server returned an empty video.");
+ const ext=outputMp4?"mp4":"webm";downloadBlob(blob,`motionforge-cloud-${dimensions().width}x${dimensions().height}-${$("fps").value}fps.${ext}`);
+ setProgress(100,"Cloud render complete",`${(blob.size/1024/1024).toFixed(1)} MB · ${ext.toUpperCase()} downloaded.`);
 }
-
+async function testCloud(){
+ const baseUrl=$("cloudUrl").value.trim().replace(/\/+$/,""),token=$("cloudToken").value.trim();
+ if(!baseUrl||!token){setMessage("Enter the Cloud API URL and token first.",true);return;}
+ try{const r=await fetch(`${baseUrl}/health`,{headers:{"Authorization":`Bearer ${token}`}});const data=await r.json();if(!r.ok)throw new Error(data.error||`HTTP ${r.status}`);setMessage(`Cloud server connected: ${data.service||"MotionForge Renderer"} · FFmpeg ${data.ffmpeg||"available"}.`);}
+ catch(e){setMessage(`Cloud connection failed: ${e.message}. Check URL, token and CORS settings.`,true);}
+}
 async function exportVideo(mp4){
   $("exportBtn").disabled=true;$("webmBtn").disabled=true;
   try{
@@ -124,8 +126,10 @@ $("openCleanPreview").onclick=()=>{const blob=new Blob([$("htmlCode").value],{ty
 $("copyCode").onclick=async()=>{try{await navigator.clipboard.writeText($("htmlCode").value);setMessage("HTML copied to clipboard.");}catch(e){setMessage("Clipboard permission unavailable.",true);}};
 $("exportBtn").onclick=()=>exportVideo(true);
 $("webmBtn").onclick=()=>exportVideo(false);
-$("saveCloud").onclick=()=>{localStorage.setItem("motionforge-cloud-url",$("cloudUrl").value.trim());setMessage("Cloud endpoint saved in this browser.");};
+$("saveCloud").onclick=()=>{localStorage.setItem("motionforge-cloud-url",$("cloudUrl").value.trim());localStorage.setItem("motionforge-cloud-token",$("cloudToken").value.trim());setMessage("Cloud settings saved in this browser. Keep your token private.");};
+$("testCloud").onclick=testCloud;
 $("resolution").onchange=()=>{$("previewSize").textContent=$("resolution").value.replace("x","×");};
 document.querySelectorAll("[data-template]").forEach(el=>el.addEventListener("click",()=>loadTemplate(el.dataset.template)));
 $("cloudUrl").value=localStorage.getItem("motionforge-cloud-url")||"";
+$("cloudToken").value=localStorage.getItem("motionforge-cloud-token")||"";
 loadTemplate("leaves");

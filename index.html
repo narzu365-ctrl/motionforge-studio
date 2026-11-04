@@ -50,7 +50,7 @@
       </div>
 
       <div class="panel settings-panel" id="export">
-        <div class="panel-head"><div><span class="step">02</span><h2>Render settings</h2></div><span class="pill">STOCK WORKFLOW</span></div>
+        <div class="panel-head"><div><span class="step">02</span><h2>Render settings · V2 Cloud Engine</h2></div><span class="pill">STOCK WORKFLOW</span></div>
         <div class="settings-grid">
           <label>Resolution<select id="resolution"><option value="1920x1080">Full HD · 1920×1080</option><option value="2560x1440">QHD · 2560×1440</option><option value="3840x2160" selected>4K UHD · 3840×2160</option><option value="1080x1920">Vertical · 1080×1920</option><option value="1080x1080">Square · 1080×1080</option></select></label>
           <label>Frame rate<select id="fps"><option>24</option><option selected>30</option><option>60</option></select></label>
@@ -60,7 +60,10 @@
           <label>Background<select id="background"><option value="keep" selected>Keep HTML background</option><option value="black">Force black</option><option value="white">Force white</option></select></label>
         </div>
         <div class="notice"><b>ⓘ</b><span>Browser export asks you to share this tab. Keep the tab visible while recording. Browser capture is limited by device performance; for dependable 4K output, connect a cloud rendering server.</span></div>
-        <div class="cloud-row"><label>Cloud render API URL <input id="cloudUrl" type="url" placeholder="https://your-render-server.example.com/render"></label><button class="btn ghost" id="saveCloud">Save endpoint</button></div>
+        <div class="cloud-row">
+<label>Cloud render API URL <input id="cloudUrl" type="url" placeholder="https://your-render-server.example.com"></label>
+<label>Cloud API token <input id="cloudToken" type="password" autocomplete="off" placeholder="Your private server token"></label>
+<button class="btn ghost" id="saveCloud">Save settings</button><button class="btn ghost" id="testCloud">Test server</button></div>
         <div class="export-actions"><button class="btn primary large" id="exportBtn">⬇ Export MP4</button><button class="btn secondary large" id="webmBtn">Export WebM</button></div>
         <div class="progress-box" id="progressBox" hidden><div class="progress-top"><span id="progressLabel">Preparing render…</span><b id="progressPercent">0%</b></div><div class="progress-track"><i id="progressBar"></i></div><small id="progressDetail">Please keep this tab open.</small></div>
         <p class="small-note" id="exportMessage">No render started yet. Your source HTML stays on this device.</p>
