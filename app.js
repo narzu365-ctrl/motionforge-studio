@@ -104,15 +104,9 @@ async function testCloud(){
  try{const r=await fetch(`${baseUrl}/health`,{headers:{"Authorization":`Bearer ${token}`}});const data=await r.json();if(!r.ok)throw new Error(data.error||`HTTP ${r.status}`);setMessage(`Cloud server connected: ${data.service||"MotionForge Renderer"} · FFmpeg ${data.ffmpeg||"available"}.`);}
  catch(e){setMessage(`Cloud connection failed: ${e.message}. Check URL, token and CORS settings.`,true);}
 }
-async function exportVideo(mp4){
-  $("exportBtn").disabled=true;$("webmBtn").disabled=true;
-  try{
-    const mode=$("renderMode").value;
-    if(mode==="cloud")await cloudRender(mp4);
-    else if(mode==="browser")await browserCapture(mp4);
-    else{
-      try{await cloudRender(mp4)}catch(cloudError){setMessage(`Cloud render unavailable (${cloudError.message}). Falling back to browser capture.`);await browserCapture(mp4);}
-    }
+ else{
+  await cloudRender(mp4);
+ }
     setMessage("Export finished. Review the file's visual quality, technical properties and licensing before submitting to a stock marketplace.");
   }catch(e){setMessage(e.message||String(e),true);setProgress(0,"Export stopped",e.message||String(e));}
   finally{$("exportBtn").disabled=false;$("webmBtn").disabled=false;}
